@@ -8,7 +8,7 @@
         xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:WpfTest"
         mc:Ignorable="d"
-        Title="Global Exhange Rates app" Height="720" Width="1280">
+        Title="Global Exhange Rates app" Height="720" Width="1280" MinWidth="700" MinHeight="400">
     <Window.Resources>
         <local:ColorToBrushConverter x:Key="ColorConverter" />
     </Window.Resources>
@@ -16,7 +16,7 @@
         <Label Content="Global Exchange Rates" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50,50,0,0" FontSize="35"/>
         <Label Content="An WPF experiment by @Rbn3D" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50,105,0,0" FontSize="15"/>
 
-        <Controls:ToggleSwitch Header="Live Update" HorizontalAlignment="Right" Margin="0,50,50,0" VerticalAlignment="Top" Width="117" IsChecked="True"/>
+        <Controls:ToggleSwitch Header="Live Update" HorizontalAlignment="Right" Margin="0,50,50,0" VerticalAlignment="Top" Width="117" IsChecked="True" Checked="ToggleSwitch_Checked" Unchecked="ToggleSwitch_Unchecked"/>
         <Controls:ToggleSwitch Header="AutoScroll" HorizontalAlignment="Right" Margin="0,117,50,0" VerticalAlignment="Top" RenderTransformOrigin="0.44,2.167"  Width="117" IsChecked="True" />
 
         <Controls:MetroAnimatedTabControl Margin="50,165,50,50">
@@ -25,13 +25,10 @@
                     <Label Content="Currencies" Width="180" HorizontalAlignment="Left" VerticalAlignment="Top" Height="40" Margin="0,10,0,0" FontSize="18" HorizontalContentAlignment="Center"/>
                     <Label Content="Chart" VerticalAlignment="Top" Height="40" Margin="201,10,0,0" FontSize="18" HorizontalContentAlignment="Center"/>
                     <Border BorderThickness="2" BorderBrush="#FF000000" HorizontalAlignment="Stretch" Margin="200,50,0,0" >
-                        <lvc:CartesianChart Grid.Row="1" DisableAnimations="True" Name="currencyChart"
+                        <lvc:CartesianChart DisableAnimations="True" Name="currencyChart"
                                     DataTooltip="{x:Null}"
                                     AnimationsSpeed="0:0:0.15"
                                     Zoom="Xy">
-                            <lvc:CartesianChart.AxisX>
-                                <lvc:Axis LabelFormatter="{Binding DateFormatter}"></lvc:Axis>
-                            </lvc:CartesianChart.AxisX>
                         </lvc:CartesianChart>
                     </Border>
 
@@ -51,37 +48,41 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Exchange calculator" HorizontalAlignment="Center">
-                <Grid>
-                    <Label Content="From" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Margin="182,95,0,0"/>
-                    <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,95,0,0" Name="ExchangeFrom">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Ellipse Fill="{Binding Color, Converter={StaticResource ColorConverter}}" Width="8" Height="8" Margin="0,2,5,2" />
-                                    <TextBlock Text="{Binding Name}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <Label Content="To" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Margin="182,140,0,0"/>
-                    <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,140,0,0" Name="ExchangeTo">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Ellipse Fill="{Binding Color, Converter={StaticResource ColorConverter}}" Width="8" Height="8" Margin="0,2,5,2" />
-                                    <TextBlock Text="{Binding Name}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <Label Content="Quantity" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Margin="182,185,0,0"/>
-                    <tk:DecimalUpDown HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,185,0,0" Height="25" Minimum="0" Value="10"/>
-                </Grid>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Label Content="From" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Margin="182,95,0,0"/>
+                        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,95,0,0" Name="ExchangeFrom">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Ellipse Fill="{Binding Color, Converter={StaticResource ColorConverter}}" Width="8" Height="8" Margin="0,2,5,2" />
+                                        <TextBlock Text="{Binding Name}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Label Content="To" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Margin="182,140,0,0"/>
+                        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,140,0,0" Name="ExchangeTo">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Ellipse Fill="{Binding Color, Converter={StaticResource ColorConverter}}" Width="8" Height="8" Margin="0,2,5,2" />
+                                        <TextBlock Text="{Binding Name}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Label Content="Quantity" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Margin="182,185,0,0"/>
+                        <tk:DecimalUpDown HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,185,0,0" Height="25" Minimum="0" Value="10"/>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
             <TabItem Header="About..." HorizontalAlignment="Center">
-                <Grid>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
 
-                </Grid>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
         </Controls:MetroAnimatedTabControl>
 
