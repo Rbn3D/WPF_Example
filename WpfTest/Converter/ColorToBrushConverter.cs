@@ -9,12 +9,18 @@ namespace WpfTest
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return new SolidColorBrush((Color)value);
+            return Convert((Color)value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (value as SolidColorBrush).Color;
+        }
+
+        // Convenience method
+        public static SolidColorBrush Convert(Color value)
+        {
+            return new SolidColorBrush((Color)value);
         }
     }
 }

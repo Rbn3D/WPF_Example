@@ -21,6 +21,8 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using MahApps.Metro.Controls;
 using System.Windows.Threading;
+using static WpfTest.Currency;
+using static WpfTest.Currency.CurrencySymbol;
 
 namespace WpfTest
 {
@@ -66,12 +68,73 @@ namespace WpfTest
 
         private void UiTimerTick(object sender, EventArgs e)
         {
+            double currentMaxWidth = ExchangeCalcContainer.ActualWidth - FromUIRect.Margin.Left - 10d;
 
+            updateExhangeRect(ExchangeFrom, FromUIRect, currentMaxWidth);
+            updateExhangeRect(ExchangeTo, ToUIRect, currentMaxWidth);
+        }
+
+        private void updateExhangeRect(ComboBox combo, Rectangle previewRect, double currentMaxWidth)
+        {
+            double desiredWidth = 0d;
+            double minWidth = 0d;
+
+            double MinTrend = Currencies.OrderBy(cr => cr.CurrentTrend).FirstOrDefault().CurrentTrend;
+            double MaxTrend = Currencies.OrderByDescending(cr => cr.CurrentTrend).FirstOrDefault().CurrentTrend;
+
+            if (combo.SelectedItem != null)
+            {
+                minWidth = 2d;
+
+                var item = (Currency)combo.SelectedItem;
+                previewRect.Fill = ColorToBrushConverter.Convert(item.Color);
+
+                desiredWidth = MathR.InverseLerp(MinTrend, MaxTrend, item.CurrentTrend); // Map to a 0 - 1 value
+                desiredWidth *= currentMaxWidth;
+            }
+
+            previewRect.Width = MathR.Lerp(Math.Max(minWidth, previewRect.ActualWidth), desiredWidth, 0.2f);
         }
 
         private void ChartTimerTick(object sender, EventArgs e)
         {
             UpdateChart();
+            UpdateEchangeConversion();
+        }
+
+        private void UpdateEchangeConversion()
+        {
+            if(ExchangeFrom.SelectedValue == null || ExchangeTo.SelectedValue == null || ExchangeDecimalTextBox.Value == null)
+            {
+                // Hide results
+                if(GridExchangeResults != null)
+                    GridExchangeResults.Visibility = Visibility.Hidden;
+
+                return;
+            }
+            else
+            {
+                Currency cFrom  = (Currency) ExchangeFrom.SelectedValue;
+                Currency cTo    = (Currency) ExchangeTo.SelectedValue;
+
+                decimal quantity = (decimal)ExchangeDecimalTextBox.Value;
+
+                double exchangeRate = cTo.CurrentTrend / cFrom.CurrentTrend;
+
+                var finalExchangeRate = exchangeRate * (double)quantity;
+
+                ToExResultName.Content = cTo.Name;
+                ToExResultName.Foreground = ColorToBrushConverter.Convert(cTo.Color); 
+                FromExResultName.Content = cFrom.Name;
+                FromExResultName.Foreground = ColorToBrushConverter.Convert(cFrom.Color);
+                ExRateResult.Content = exchangeRate.ToString();
+
+                ExchangeResult.Content = cTo.Format(finalExchangeRate);
+
+                // Show results
+                if (GridExchangeResults != null)
+                    GridExchangeResults.Visibility = Visibility.Visible;
+            }
         }
 
         private void UpdateChart()
@@ -82,7 +145,12 @@ namespace WpfTest
             {
                 var curr = mArrayCurrencies[i];
 
-                curr.CurrentTrend += (r.NextDouble() < .8 ? 1 : -1) * r.Next(-10, 10);
+                curr.CurrentTrend += ((double)r.Next(-curr.Volatility, curr.Volatility)) + r.NextDouble();
+
+                if (curr.CurrentTrend < 0d) // Never allow negative currency trend
+                {
+                    curr.CurrentTrend = ((double)r.Next(0, 5)) + r.NextDouble();
+                }
                 var newVal = curr.CurrentTrend;
 
                 curr.ChartSerie.Values.Add(newVal);
@@ -107,7 +175,13 @@ namespace WpfTest
 
                 for (var j = 0; j < initialElements; j++)
                 {
-                    curr.CurrentTrend += (r.NextDouble() < .8 ? 1 : -1) * r.Next(-10, 10);
+                    curr.CurrentTrend += ((double)r.Next(-curr.Volatility, curr.Volatility)) + r.NextDouble();
+
+                    if(curr.CurrentTrend < 0d) // Never allow negative currency trend
+                    {
+                        curr.CurrentTrend = ((double)r.Next(0, 5)) + r.NextDouble();
+                    }
+
                     values[j] = curr.CurrentTrend;
                 }
 
@@ -127,24 +201,33 @@ namespace WpfTest
             }
 
             currencyChart.Series = Series;
-            currencyChart.AxisX.Add(new Axis()
+
+            AxisX.LabelFormatter = value =>
             {
-                LabelFormatter = value => {
-                        DateTime clone = InitDate.AddSeconds(value);
-                        return clone.ToString("HH:mm:ss");
-                    },
-                Separator = new LiveCharts.Wpf.Separator()
-            });
+                DateTime clone = InitDate.AddSeconds(value);
+                return clone.ToString("HH:mm:ss");
+            };
+            AxisX.Separator = new LiveCharts.Wpf.Separator();
         }
 
         private void InitializeCurrencies()
         {
             List<Currency> mCurrencies = new List<Currency>();
 
-            mCurrencies.Add(new Currency() { Name = "EUR", Color = Colors.Blue });
-            mCurrencies.Add(new Currency() { Name = "USD", Color = Colors.Green });
-            mCurrencies.Add(new Currency() { Name = "BTC", Color = Colors.Orange });
-            mCurrencies.Add(new Currency() { Name = "ETR", Color = Colors.LightBlue });
+            var symbolEUR = new CurrencySymbol() { Symbol = "€" };
+            var symbolUSD = new CurrencySymbol() { Symbol = "$", Location = SymbolLocation.Left };
+            var symbolBTC = new CurrencySymbol() { Symbol = "BTC" };
+            var symbolETR = new CurrencySymbol() { Symbol = "ETR" };
+
+            double trendEUR = ((double)random.Next(40, 60)) + random.NextDouble();
+            double trendUSD = ((double)random.Next(40, 60)) + random.NextDouble();
+            double trendBTC = ((double)random.Next(300, 600)) + random.NextDouble();
+            double trendETR = ((double)random.Next(200, 400)) + random.NextDouble();
+
+            mCurrencies.Add(new Currency() { Name = "EUR", Color = Colors.Blue, CurrentTrend = trendEUR, Volatility = 50, Symbol = symbolEUR });
+            mCurrencies.Add(new Currency() { Name = "USD", Color = Colors.Green, CurrentTrend = trendUSD, Volatility = 50, Symbol = symbolUSD });
+            mCurrencies.Add(new Currency() { Name = "BTC", Color = Colors.Orange, CurrentTrend = trendBTC, Volatility = 200, Symbol = symbolBTC });
+            mCurrencies.Add(new Currency() { Name = "ETR", Color = Colors.LightBlue, CurrentTrend = trendETR, Volatility = 360, Symbol = symbolETR });
 
             Currencies = mCurrencies;
         }
@@ -158,6 +241,52 @@ namespace WpfTest
         {
             chartTimer.Stop();
         }
+
+        private void CurrencyChart_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            AutoScrollCheckbox.IsChecked = false;
+        }
+
+        private void CurrencyChart_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            AutoScrollCheckbox.IsChecked = false;
+        }
+
+        private void AutoScrollCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            // Restore automatic zoom / autoScroll
+            currencyChart.AxisX[0].MinValue = double.NaN;
+            currencyChart.AxisX[0].MaxValue = double.NaN;
+            currencyChart.AxisY[0].MinValue = double.NaN;
+            currencyChart.AxisY[0].MaxValue = double.NaN;
+        }
+
+        private void AutoScrollCheckbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            // Disable automatic zoom / autoScroll
+            currencyChart.AxisX[0].MinValue = currencyChart.AxisX[0].ActualMinValue;
+            currencyChart.AxisX[0].MaxValue = currencyChart.AxisX[0].ActualMaxValue;
+            currencyChart.AxisY[0].MinValue = currencyChart.AxisY[0].ActualMinValue;
+            currencyChart.AxisY[0].MaxValue = currencyChart.AxisY[0].ActualMaxValue;
+        }
+
+        private void UpdateCurrenciesEnabledState(object sender, RoutedEventArgs e)
+        {
+            foreach(var curr in Currencies)
+            {
+                curr.ChartSerie.Visibility = curr.Enabled ? Visibility.Visible : Visibility.Hidden;
+            }
+        }
+
+        private void ExchangeComboSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateEchangeConversion();
+        }
+
+        private void ExchangeDecimalValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            UpdateEchangeConversion();
+        }
     }
 
     public class Currency
@@ -170,6 +299,32 @@ namespace WpfTest
 
         public double CurrentTrend { get; set; } = 0d;
 
+        public int Volatility { get; set; } = 50;
+
         public Series ChartSerie { get; set; }
+
+        public CurrencySymbol Symbol { get; set; }
+
+        public string Format(double ammount)
+        {
+            if(Symbol.Location == SymbolLocation.Left)
+            {
+                return String.Format("{0} {1:0.00}", Symbol.Symbol, ammount);
+            }
+            else
+            {
+                return String.Format("{0:0.00} {1}", ammount, Symbol.Symbol);
+            }
+        }
+
+        public class CurrencySymbol
+        {
+            public enum SymbolLocation
+            {
+                Left, Right
+            }
+            public String Symbol { get; set; }
+            public SymbolLocation Location { get; set; } = SymbolLocation.Right;
+        }
     }
 }

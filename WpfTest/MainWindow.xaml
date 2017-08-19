@@ -17,7 +17,7 @@
         <Label Content="An WPF experiment by @Rbn3D" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50,105,0,0" FontSize="15"/>
 
         <Controls:ToggleSwitch Header="Live Update" HorizontalAlignment="Right" Margin="0,50,50,0" VerticalAlignment="Top" Width="117" IsChecked="True" Checked="ToggleSwitch_Checked" Unchecked="ToggleSwitch_Unchecked"/>
-        <Controls:ToggleSwitch Header="AutoScroll" HorizontalAlignment="Right" Margin="0,117,50,0" VerticalAlignment="Top" RenderTransformOrigin="0.44,2.167"  Width="117" IsChecked="True" />
+        <Controls:ToggleSwitch Header="AutoScroll" HorizontalAlignment="Right" Margin="0,117,50,0" VerticalAlignment="Top" RenderTransformOrigin="0.44,2.167"  Width="117" IsChecked="True" Name="AutoScrollCheckbox" Checked="AutoScrollCheckbox_Checked" Unchecked="AutoScrollCheckbox_Unchecked"/>
 
         <Controls:MetroAnimatedTabControl Margin="50,165,50,50">
             <TabItem Header="Live Chart">
@@ -25,10 +25,17 @@
                     <Label Content="Currencies" Width="180" HorizontalAlignment="Left" VerticalAlignment="Top" Height="40" Margin="0,10,0,0" FontSize="18" HorizontalContentAlignment="Center"/>
                     <Label Content="Chart" VerticalAlignment="Top" Height="40" Margin="201,10,0,0" FontSize="18" HorizontalContentAlignment="Center"/>
                     <Border BorderThickness="2" BorderBrush="#FF000000" HorizontalAlignment="Stretch" Margin="200,50,0,0" >
-                        <lvc:CartesianChart DisableAnimations="True" Name="currencyChart"
-                                    DataTooltip="{x:Null}"
-                                    AnimationsSpeed="0:0:0.15"
-                                    Zoom="Xy">
+                        <lvc:CartesianChart 
+                            DisableAnimations="True" Name="currencyChart"
+                            DataTooltip="{x:Null}"
+                            AnimationsSpeed="0:0:0.15"
+                            Zoom="Xy"
+                            MouseWheel="CurrencyChart_MouseWheel"
+                            MouseDown="CurrencyChart_MouseDown"
+                            PreviewMouseWheel="CurrencyChart_MouseWheel">
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis Name="AxisX"/>
+                            </lvc:CartesianChart.AxisX>
                         </lvc:CartesianChart>
                     </Border>
 
@@ -38,7 +45,7 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <Ellipse Fill="{Binding Color, Converter={StaticResource ColorConverter}}" Width="8" Height="8" Margin="0,2,5,2" />
-                                        <CheckBox Content="{Binding Name}" IsChecked="{Binding Enabled}"/>
+                                        <CheckBox Content="{Binding Name}" IsChecked="{Binding Enabled}" Checked="UpdateCurrenciesEnabledState" Unchecked="UpdateCurrenciesEnabledState"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -49,9 +56,9 @@
             </TabItem>
             <TabItem Header="Exchange calculator" HorizontalAlignment="Center">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <Grid>
+                    <Grid Name="ExchangeCalcContainer">
                         <Label Content="From" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Margin="182,95,0,0"/>
-                        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,95,0,0" Name="ExchangeFrom">
+                        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,95,0,0" Name="ExchangeFrom" SelectionChanged="ExchangeComboSelectionChanged">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -73,7 +80,22 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
                         <Label Content="Quantity" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Margin="182,185,0,0"/>
-                        <tk:DecimalUpDown HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,185,0,0" Height="25" Minimum="0" Value="10"/>
+                        <tk:DecimalUpDown HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,185,0,0" Height="25" Minimum="0" Value="10" ValueChanged="ExchangeDecimalValueChanged" Name="ExchangeDecimalTextBox"/>
+                        <Rectangle Fill="Red" Margin="440,95,0,314" HorizontalAlignment="Left" Width="0" Height="25" VerticalAlignment="Top" Name="FromUIRect"/>
+                        <Rectangle Fill="Blue" Margin="440,141,0,0" HorizontalAlignment="Left" Width="0" Height="25" VerticalAlignment="Top" Name="ToUIRect"/>
+                        <Grid Name="GridExchangeResults" HorizontalAlignment="Center" VerticalAlignment="Top" Width="600" Height="157" Margin="0,251,0,0" Visibility="Hidden">
+                            <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Label Content="Exchange rate: " FontSize="15"/>
+                                    <Label Name="ToExResultName" FontSize="15"/>
+                                    <Label Content= " / " FontSize="15"/>
+                                    <Label Name="FromExResultName" FontSize="15"/>
+                                    <Label Content=" = " FontSize="15"/>
+                                    <Label Name="ExRateResult" FontSize="15"/>
+                                </StackPanel>
+                                <Label VerticalAlignment="Stretch" Height="100" FontSize="45" FontWeight="Bold" HorizontalContentAlignment="Center" Name="ExchangeResult"/>
+                            </StackPanel>
+                        </Grid>
                     </Grid>
                 </ScrollViewer>
             </TabItem>

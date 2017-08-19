@@ -13,6 +13,9 @@
                 <!-- Accent and AppTheme setting -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <!--Live charts-->
+                <ResourceDictionary Source="pack://application:,,,/LiveCharts.Wpf;component/Themes/Colors/metro.xaml" />
+                <!--<ResourceDictionary Source="pack://application:,,,/LiveCharts.Wpf;component/Themes/base.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

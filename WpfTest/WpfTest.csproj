@@ -93,6 +93,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Converter\ColorToBrushConverter.cs" />
+    <Compile Include="Helper\MathR.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
