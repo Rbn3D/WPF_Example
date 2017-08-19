@@ -22,8 +22,8 @@ This app is a sample app written in WPF. It simulates Currency exchange rates, i
 
 ### The app in action (screens) ###
 
-[![Screen1](https://github.com/Rbn3D/WPF_Example/tree/master/RepoImages/Screen1.png)]
-[![Screen2](https://github.com/Rbn3D/WPF_Example/tree/master/RepoImages/Screen2.png)]
+[![Screen1](https://github.com/Rbn3D/WPF_Example/tree/master/RepoImages/Screen1.png?raw=true)]
+[![Screen2](https://github.com/Rbn3D/WPF_Example/tree/master/RepoImages/Screen2.png?raw=true)]
 
 ### Download ###
 
