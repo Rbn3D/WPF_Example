@@ -17,5 +17,5 @@ This app is a sample app written in WPF. It simulates Currency exchange rates, i
 
 ### Download ###
 
-TODO!
+https://github.com/Rbn3D/WPF_Example/releases
 
