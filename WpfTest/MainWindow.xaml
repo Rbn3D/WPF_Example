@@ -69,7 +69,7 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
                         <Label Content="To" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64" Margin="182,140,0,0"/>
-                        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,140,0,0" Name="ExchangeTo">
+                        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Margin="261,140,0,0" Name="ExchangeTo" SelectionChanged="ExchangeComboSelectionChanged">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">

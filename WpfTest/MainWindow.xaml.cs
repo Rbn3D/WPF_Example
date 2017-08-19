@@ -119,17 +119,17 @@ namespace WpfTest
 
                 decimal quantity = (decimal)ExchangeDecimalTextBox.Value;
 
-                double exchangeRate = cTo.CurrentTrend / cFrom.CurrentTrend;
+                double exchangeRate = cFrom.CurrentTrend / cTo.CurrentTrend;
 
                 var finalExchangeRate = exchangeRate * (double)quantity;
 
-                ToExResultName.Content = cTo.Name;
-                ToExResultName.Foreground = ColorToBrushConverter.Convert(cTo.Color); 
-                FromExResultName.Content = cFrom.Name;
-                FromExResultName.Foreground = ColorToBrushConverter.Convert(cFrom.Color);
+                ToExResultName.Content = cFrom.Name;
+                ToExResultName.Foreground = ColorToBrushConverter.Convert(cFrom.Color); 
+                FromExResultName.Content = cTo.Name;
+                FromExResultName.Foreground = ColorToBrushConverter.Convert(cTo.Color);
                 ExRateResult.Content = exchangeRate.ToString();
 
-                ExchangeResult.Content = cTo.Format(finalExchangeRate);
+                ExchangeResult.Content = String.Format("{0} = {1}", cFrom.Format((double)quantity), cTo.Format(finalExchangeRate));
 
                 // Show results
                 if (GridExchangeResults != null)
@@ -221,13 +221,13 @@ namespace WpfTest
 
             double trendEUR = ((double)random.Next(40, 60)) + random.NextDouble();
             double trendUSD = ((double)random.Next(40, 60)) + random.NextDouble();
-            double trendBTC = ((double)random.Next(300, 600)) + random.NextDouble();
-            double trendETR = ((double)random.Next(200, 400)) + random.NextDouble();
+            double trendBTC = ((double)random.Next(300, 400)) + random.NextDouble();
+            double trendETR = ((double)random.Next(200, 300)) + random.NextDouble();
 
-            mCurrencies.Add(new Currency() { Name = "EUR", Color = Colors.Blue, CurrentTrend = trendEUR, Volatility = 50, Symbol = symbolEUR });
-            mCurrencies.Add(new Currency() { Name = "USD", Color = Colors.Green, CurrentTrend = trendUSD, Volatility = 50, Symbol = symbolUSD });
-            mCurrencies.Add(new Currency() { Name = "BTC", Color = Colors.Orange, CurrentTrend = trendBTC, Volatility = 200, Symbol = symbolBTC });
-            mCurrencies.Add(new Currency() { Name = "ETR", Color = Colors.LightBlue, CurrentTrend = trendETR, Volatility = 360, Symbol = symbolETR });
+            mCurrencies.Add(new Currency() { Name = "EUR", Color = Colors.Blue, CurrentTrend = trendEUR, Volatility = 80, Symbol = symbolEUR });
+            mCurrencies.Add(new Currency() { Name = "USD", Color = Colors.Green, CurrentTrend = trendUSD, Volatility = 70, Symbol = symbolUSD });
+            mCurrencies.Add(new Currency() { Name = "BTC", Color = Colors.Orange, CurrentTrend = trendBTC, Volatility = 165, Symbol = symbolBTC });
+            mCurrencies.Add(new Currency() { Name = "ETR", Color = Colors.LightBlue, CurrentTrend = trendETR, Volatility = 150, Symbol = symbolETR });
 
             Currencies = mCurrencies;
         }
