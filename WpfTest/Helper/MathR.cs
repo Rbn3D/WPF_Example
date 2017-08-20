@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace WpfTest
 {
@@ -34,6 +35,18 @@ namespace WpfTest
         public static double Lerp(double value1, double value2, double ammount)
         {
             return value1 + (value2 - value1) * MathR.Clamp01(ammount);
+        }
+
+        public static Color Lerp(Color color1, Color color2, double ammount)
+        {
+            var col = new Color();
+
+            col.R = (byte) Lerp((int) color1.R, (int)color2.R, ammount);
+            col.G = (byte) Lerp((int) color1.G, (int)color2.G, ammount);
+            col.B = (byte) Lerp((int) color1.B, (int)color2.B, ammount);
+            col.A = (byte) Lerp((int) color1.A, (int)color2.A, ammount);
+
+            return col;
         }
 
         public static float InverseLerp(float from, float to, float value)

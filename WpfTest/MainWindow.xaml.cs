@@ -50,6 +50,10 @@ namespace WpfTest
 
             PopulateIntialChartData();
 
+            // Base currency combo
+            BaseCurrencyCombo.ItemsSource = Currencies;
+            BaseCurrencyCombo.SelectedItem = Currencies[0];
+
             // Bind Echange rates combos
             ExchangeFrom.ItemsSource = Currencies;
             ExchangeTo.ItemsSource = Currencies;
@@ -216,20 +220,40 @@ namespace WpfTest
 
             var symbolEUR = new CurrencySymbol() { Symbol = "€" };
             var symbolUSD = new CurrencySymbol() { Symbol = "$", Location = SymbolLocation.Left };
+            var symbolGBP = new CurrencySymbol() { Symbol = "£", Location = SymbolLocation.Left };
             var symbolBTC = new CurrencySymbol() { Symbol = "BTC" };
             var symbolETR = new CurrencySymbol() { Symbol = "ETR" };
 
             double trendEUR = ((double)random.Next(40, 60)) + random.NextDouble();
             double trendUSD = ((double)random.Next(40, 60)) + random.NextDouble();
+            double trendGBP = ((double)random.Next(35, 55)) + random.NextDouble();
             double trendBTC = ((double)random.Next(300, 400)) + random.NextDouble();
             double trendETR = ((double)random.Next(200, 300)) + random.NextDouble();
 
-            mCurrencies.Add(new Currency() { Name = "EUR", Color = Colors.Blue, CurrentTrend = trendEUR, Volatility = 80, Symbol = symbolEUR });
-            mCurrencies.Add(new Currency() { Name = "USD", Color = Colors.Green, CurrentTrend = trendUSD, Volatility = 70, Symbol = symbolUSD });
-            mCurrencies.Add(new Currency() { Name = "BTC", Color = Colors.Orange, CurrentTrend = trendBTC, Volatility = 165, Symbol = symbolBTC });
-            mCurrencies.Add(new Currency() { Name = "ETR", Color = Colors.LightBlue, CurrentTrend = trendETR, Volatility = 150, Symbol = symbolETR });
+            var eur = new Currency() { Name = "EUR", Color = Colors.Blue, CurrentTrend = trendEUR, Volatility = 80, Symbol = symbolEUR };
+            var usd = new Currency() { Name = "USD", Color = Colors.Green, CurrentTrend = trendUSD, Volatility = 70, Symbol = symbolUSD };
+            var gbp = new Currency() { Name = "GBP", Color = Colors.Gray, CurrentTrend = trendGBP, Volatility = 90, Symbol = symbolGBP };
+            var btc = new Currency() { Name = "BTC", Color = Colors.Orange, CurrentTrend = trendBTC, Volatility = 165, Symbol = symbolBTC };
+            var etr = new Currency() { Name = "ETR", Color = Colors.LightBlue, CurrentTrend = trendETR, Volatility = 150, Symbol = symbolETR };
+
+            mCurrencies.Add(eur);
+            mCurrencies.Add(usd);
+            mCurrencies.Add(gbp);
+            mCurrencies.Add(btc);
+            mCurrencies.Add(etr);
 
             Currencies = mCurrencies;
+
+            // Exchange Rate Watchers
+            var listRates = new List<CurrencyPair>(6);
+            listRates.Add(new CurrencyPair() { BaseCurrency = eur, TargetCurrency = usd });
+            listRates.Add(new CurrencyPair() { BaseCurrency = eur, TargetCurrency = btc });
+            listRates.Add(new CurrencyPair() { BaseCurrency = usd, TargetCurrency = btc });
+            listRates.Add(new CurrencyPair() { BaseCurrency = gbp, TargetCurrency = eur });
+            listRates.Add(new CurrencyPair() { BaseCurrency = usd, TargetCurrency = etr });
+            listRates.Add(new CurrencyPair() { BaseCurrency = eur, TargetCurrency = etr });
+
+            ExchangeRateWatchersContainer.ItemsSource = listRates;
         }
 
         private void ToggleSwitch_Checked(object sender, RoutedEventArgs e)
@@ -287,44 +311,19 @@ namespace WpfTest
         {
             UpdateEchangeConversion();
         }
-    }
 
-    public class Currency
-    {
-        public string Name { get; set; }
-
-        public bool Enabled { get; set; } = true;
-
-        public Color Color { get; set; }
-
-        public double CurrentTrend { get; set; } = 0d;
-
-        public int Volatility { get; set; } = 50;
-
-        public Series ChartSerie { get; set; }
-
-        public CurrencySymbol Symbol { get; set; }
-
-        public string Format(double ammount)
+        private void BaseCurrencyCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(Symbol.Location == SymbolLocation.Left)
-            {
-                return String.Format("{0} {1:0.00}", Symbol.Symbol, ammount);
-            }
-            else
-            {
-                return String.Format("{0:0.00} {1}", ammount, Symbol.Symbol);
-            }
+           UpdateBaseCurrency((Currency)BaseCurrencyCombo.SelectedValue);
         }
 
-        public class CurrencySymbol
+        private void UpdateBaseCurrency(Currency currentBase)
         {
-            public enum SymbolLocation
-            {
-                Left, Right
-            }
-            public String Symbol { get; set; }
-            public SymbolLocation Location { get; set; } = SymbolLocation.Right;
+            var filteredCurrencies = Currencies.Where(c => c != currentBase);
+            currencyList.ItemsSource = filteredCurrencies;
+
+            var filteredSeries = Currencies.Where(c => c != currentBase).Select(c => c.ChartSerie);
+            currencyChart.Series = filteredSeries.AsSeriesCollection();
         }
     }
 }
