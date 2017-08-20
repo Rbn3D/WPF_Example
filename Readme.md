@@ -12,7 +12,7 @@ This app is a sample app written in WPF. It simulates Currency exchange rates, i
 
 ### The app in action (screens) ###
 
-![Sceenshot](/RepoImages/Screen1.png?raw=true "Screenshot")
+![Sceenshot](/RepoImages/Screen3.png?raw=true "Screenshot")
 ![Sceenshot](/RepoImages/Screen2.png?raw=true "Screenshot")
 
 ### Download ###
