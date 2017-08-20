@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WpfTest.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="162" Width="162">
+             d:DesignHeight="50" d:DesignWidth="162" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
     <Border BorderThickness="1" BorderBrush="LightGray">
         <Grid>
             <Label Content="&#9650;" FontSize="16" Margin="5,3,0,3" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Name="ArrowTextBlock"/>

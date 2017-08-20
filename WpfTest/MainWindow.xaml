@@ -6,6 +6,7 @@
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:ly="clr-namespace:WpfAutoGrid;assembly=WpfAutoGrid"
         xmlns:local="clr-namespace:WpfTest"
         xmlns:uc="clr-namespace:WpfTest.UserControls"
         mc:Ignorable="d"
@@ -39,10 +40,10 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <ItemsControl Grid.Column="1" x:Name="ExchangeRateWatchersContainer" HorizontalContentAlignment="Stretch">
+                        <ItemsControl Grid.Column="1" x:Name="ExchangeRateWatchersContainer" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch"/>
+                                    <ly:AutoGrid Orientation="Horizontal" ColumnCount="6" ColumnWidth="*" RowHeight="*" RowCount="1"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
