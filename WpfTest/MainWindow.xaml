@@ -135,7 +135,12 @@
             <TabItem Header="About..." HorizontalAlignment="Center">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <Grid>
+                        <Label HorizontalAlignment="Center" VerticalAlignment="Top" Height="80" Margin="0,44,0,0" Content="Global Exchange Rates" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="30"/>
+                        <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Top" TextWrapping="Wrap" MaxWidth="500" Height="290" Margin="286,138,286,0" FontSize="15">
+                            This is a sample app written in WPF. It simulates Currency exchange rates, including a chart and an exchange rate converter.
 
+Disclaimer: Please note the data this app shows is fake data, do not use for investiment or other financial purpouses.
+                        </TextBlock>
                     </Grid>
                 </ScrollViewer>
             </TabItem>
